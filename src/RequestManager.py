@@ -1,8 +1,8 @@
 """
 /***************************************************************************
-OlaInterface
-A QGIS plugin
-Interface to the Land Observatory platform
+lo-editor
+A QGIS plugin to add and edit spatial information to land deals on the Land
+Observatory platform.
                              -------------------
 begin                : 2012-06-28 Semi-final Germany vs. Italy
 copyright            : (C) 2012 by Adrian Weber

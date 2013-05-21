@@ -1,8 +1,8 @@
 """
 /***************************************************************************
-UploadActivity
-A QGIS plugin
-Upload activity to OLA platform
+lo-editor
+A QGIS plugin to add and edit spatial information to land deals on the Land
+Observatory platform.
                              -------------------
 begin                : 2012-04-05 Holy Thursday
 copyright            : (C) 2012 by Adrian Weber
