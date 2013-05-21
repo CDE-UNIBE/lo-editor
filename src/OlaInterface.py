@@ -1,8 +1,8 @@
 """
 /***************************************************************************
-UploadActivity
-A QGIS plugin
-Upload activity to OLA platform
+lo-editor
+A QGIS plugin to add and edit spatial information to land deals on the Land
+Observatory platform.
                              -------------------
 begin                : 2012-04-05 Holy Thursday
 copyright            : (C) 2012 by Adrian Weber
@@ -70,30 +70,8 @@ class OlaInterface(QObject):
         Open the main interface dialog
         """
 
-        #file = QFile(":/settings.ini")
-        #file.open(QIODevice.ReadOnly)
-        #print file.fileName()
-
-        #activityRequestManager = ActivityRequestManager("http://localhost:6543", "admin", "admin")
-        #stakeholderRequestManager = StakeholderRequestManager("http://localhost:6543", "admin", "admin")
-        
-        dialog = OlaInterfaceDialog(self.iface) #, activityRequestManager=activityRequestManager, stakeholderRequestManager=stakeholderRequestManager)
+        dialog = OlaInterfaceDialog(self.iface)
         #activityRequestManager.setLogger(dialog.getLogger())
         #stakeholderRequestManager.setLogger(dialog.getLogger())
         dialog.show()
         dialog.exec_()
-
-def formOpen(dialog, layerid, featureid):
-
-    layer = QgsMapLayerRegistry.instance().mapLayer(layerid)
-    feature = QgsFeature()
-    layer.featureAtId(featureid, feature)
-    attributeMap = feature.attributeMap()
-    uuid = attributeMap[0].toString()
-    activityRequestManager = ActivityRequestManager("http://localhost:6543", "admin", "admin")
-    #activityRequestManager.getActivityById(uuid)
-    activityRequestManager.getActivityById("746fba11-5fbe-453a-86a3-5fb1005e90a0")
-
-    dialog.hide()
-    new_dialog = Ui_Dialog()
-    new_dialog.setupUi(QDialog())

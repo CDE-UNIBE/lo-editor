@@ -36,3 +36,6 @@ nosetests.xml
 
 # Zip archives
 *.zip
+
+# Do not track the NetBeans project directory
+/nbproject/

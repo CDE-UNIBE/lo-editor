@@ -1,8 +1,9 @@
 """
 /***************************************************************************
-UploadActivity
-A QGIS plugin
-Upload activity to OLA platform
+lo-editor
+A QGIS plugin to add and edit spatial information to land deals on the Land
+Observatory platform.
+This script initializes the plugin, making it known to QGIS.
                              -------------------
 begin                : 2012-04-05 Holy Thursday
 copyright            : (C) 2012 by Adrian Weber
@@ -17,14 +18,14 @@ email                : adrian.weber@cde.unibe.ch
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
- This script initializes the plugin, making it known to QGIS.
 """
+
 def name(): 
-    return "Land Observatory Polygon Editor"
+    return "Land Observatory Editor"
 def description():
-    return "A plugin to add and edit spatial information to land deals from the Land Observatory platform"
+    return "A plugin to add and edit spatial information to land deals on the Land Observatory platform"
 def version(): 
-    return "Version 0.1"
+    return "Version 0.1.0"
 def icon():
     return "lo-logo.png"
 def qgisMinimumVersion():

@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<?xml-stylesheet type='text/xsl' href='plugins.xsl' ?>
+<plugins>
+  <pyqgis_plugin name='Land Observatory Polygon Editor' version='0.1'>
+    <description>A plugin to add and edit spatial information to land deals from the Land Observatory platform</description>
+    <version>0.1</version>
+    <qgis_minimum_version>1.8</qgis_minimum_version>
+    <homepage>http://www.landobservatory.org/</homepage>
+    <file_name>olainterface.zip</file_name>
+    <author_name>Adrian Weber</author_name>
+    <download_url>http://lmkp-dev.unibe.ch/qgis/plugins/olainterface.zip</download_url>
+    <uploaded_by>webrian</uploaded_by>
+    <create_date>2013-05-02</create_date>
+    <update_date>2013-05-02</update_date>
+  </pyqgis_plugin>
+</plugins>

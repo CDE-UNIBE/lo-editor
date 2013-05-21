@@ -95,7 +95,7 @@
                     <string/>
                    </property>
                    <property name="text">
-                    <string>http://localhost:6543</string>
+                    <string notr="true">http://www.landobservatory.org</string>
                    </property>
                   </widget>
                  </item>
