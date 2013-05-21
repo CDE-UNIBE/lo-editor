@@ -5,7 +5,7 @@
 
 <html>
 <head>
-<title>Qgis Plugins - Land Observatory's Repository</title>
+<title>QGIS Plugins - Land Observatory's Repository</title>
 <!--link href="xsl.css" rel="stylesheet" type="text/css" /-->
 
 <style>
@@ -54,7 +54,7 @@ div.download, div.author{
 </head>
 <body>
 
-<h1>Qgis plugins - Land Observatory's Repository</h1>
+<h1>QGIS plugins - Land Observatory's Repository</h1>
 <xsl:for-each select="/plugins/pyqgis_plugin">
 <div class="plugin">
 <div class="head">
