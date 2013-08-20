@@ -25,7 +25,7 @@ def name():
 def description():
     return "A plugin to add and edit spatial information to land deals on the Land Observatory platform"
 def version(): 
-    return "Version 0.1.1"
+    return "Version 0.1.2"
 def icon():
     return "lo-logo.png"
 def qgisMinimumVersion():

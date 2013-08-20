@@ -1,16 +1,16 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <?xml-stylesheet type='text/xsl' href='plugins.xsl' ?>
 <plugins>
-  <pyqgis_plugin name='Land Observatory Editor' version='0.1.1'>
+  <pyqgis_plugin name='Land Observatory Editor' version='0.1.2'>
     <description>A plugin to add and edit spatial information to land deals from the Land Observatory platform</description>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
     <qgis_minimum_version>1.8</qgis_minimum_version>
     <homepage>http://www.landobservatory.org/</homepage>
-    <file_name>lo-editor.zip</file_name>
+    <file_name>lo_editor.zip</file_name>
     <author_name>webrian</author_name>
-    <download_url>lo-editor.zip</download_url>
+    <download_url>http://www.landobservatory.org/qgis/plugins/lo_editor.zip</download_url>
     <uploaded_by>webrian</uploaded_by>
     <create_date>2013-05-02</create_date>
-    <update_date>2013-05-21</update_date>
+    <update_date>2013-08-20</update_date>
   </pyqgis_plugin>
 </plugins>
