@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 /***************************************************************************
 lo-editor
@@ -20,16 +21,6 @@ email                : adrian.weber@cde.unibe.ch
  ***************************************************************************/
 """
 
-def name(): 
-    return "Land Observatory Editor"
-def description():
-    return "A plugin to add and edit spatial information to land deals on the Land Observatory platform"
-def version(): 
-    return "Version 0.1.2"
-def icon():
-    return "lo-logo.png"
-def qgisMinimumVersion():
-    return "1.8"
 def classFactory(iface): 
     from OlaInterface import OlaInterface
     return OlaInterface(iface)

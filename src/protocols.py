@@ -21,17 +21,17 @@ email                : adrian.weber@cde.unibe.ch
 
 from PyQt4.QtCore import QByteArray
 from PyQt4.QtCore import QObject
-from PyQt4.QtCore import QString
 from PyQt4.QtCore import QUrl
 from PyQt4.QtCore import SIGNAL
 from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtNetwork import QNetworkAccessManager
 from PyQt4.QtNetwork import QNetworkRequest
+from PyQt4.QtNetwork import QNetworkReply
 import simplejson as json
 
 class SettingsProtocol(QObject):
 
-    readSignal = pyqtSignal(bool, int, QString)
+    readSignal = pyqtSignal(bool, int, str)
 
     def __init__(self, host, user, password):
         QObject.__init__(self)
@@ -66,9 +66,9 @@ class SettingsProtocol(QObject):
 
     def readRequestFinished(self, reply):
         # Get the HTTP status code from the reply
-        self.httpStatusCode = int(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute).toString())
+        self.httpStatusCode = int(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute))
 
-        data = reply.readAll()
+        data = str(reply.readAll())
 
         # Check the status code see also http://en.wikipedia.org/wiki/HTTP_status_code
         # In case of a successful upload we get a 201 status code back and the
@@ -77,25 +77,27 @@ class SettingsProtocol(QObject):
         # the host was not found, the authentication failed or a forbidden
         # action in case a style with the same name already exists. It's up to
         # the receiver to handle these status codes.
-        self.readSignal.emit(self.httpStatusCode in (200, 201), self.httpStatusCode, QString(data))
+        self.readSignal.emit(self.httpStatusCode in (200, 201), self.httpStatusCode, data)
 
 
 class ActivityProtocol(QObject):
 
     # SIGNAL that is emitted after activities have been read
-    readSignal = pyqtSignal(bool, int, QString)
+    readSignal = pyqtSignal(bool, int, str)
 
     # SIGNAL that is emitted after a new activity has been added
-    created = pyqtSignal(bool, int, QString)
+    created = pyqtSignal(bool, int, str)
 
     # SIGNAL that is emitted after an existing activity has been updated
-    updated = pyqtSignal(bool, int, QString)
+    updated = pyqtSignal(bool, int, str)
 
     # SIGNAL that is emitted after an activity has been deleted
-    deleted = pyqtSignal(bool, int, QString)
+    deleted = pyqtSignal(bool, int, str)
 
     # SIGNAL that is emitted after activities have been counted
-    counted = pyqtSignal(bool, int, QString)
+    counted = pyqtSignal(bool, int, str)
+
+    finished = pyqtSignal( QNetworkReply )
 
     def __init__(self, host, user, password):
         QObject.__init__(self)
@@ -126,7 +128,11 @@ class ActivityProtocol(QObject):
         self.request.setRawHeader("Authorization", self.login)
         self.request.setHeader(QNetworkRequest.ContentTypeHeader, "application/json")
 
-        self.manager.post(self.request, QString(json.dumps(rawBody)).toUtf8())
+        print rawBody
+        print json.dumps(rawBody)
+        print json.dumps(rawBody).decode("utf-8")
+
+        self.manager.post(self.request, json.dumps(rawBody).decode("UTF-8"))
 
         return url
 
@@ -134,16 +140,17 @@ class ActivityProtocol(QObject):
         self.disconnect(self.manager, SIGNAL("finished( QNetworkReply* )"), self.updateRequestFinished)
 
         # Get the HTTP status code from the reply
-        self.httpStatusCode = int(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute).toString())
+        self.httpStatusCode = int(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute))
 
-        #httpReasonPhrase = reply.attribute(QNetworkRequest.HttpReasonPhraseAttribute).toString()
+        #httpReasonPhrase = reply.attribute(QNetworkRequest.HttpReasonPhraseAttribute)
 
         data = reply.readAll()
 
-        self.updated.emit(self.httpStatusCode in (200, 201), self.httpStatusCode, QString(data))
+        self.updated.emit(self.httpStatusCode in (200, 201), self.httpStatusCode, str(data))
 
     def read(self, extent):
         self.connect(self.manager, SIGNAL("finished( QNetworkReply* )"), self.readRequestFinished)
+        #self.finished.connect(self.readRequestFinished)
 
         # Limit the longitude and latitutde maximum boundaries
         xmin = extent.xMinimum() if extent.xMinimum() >= -180 else -180
@@ -165,7 +172,7 @@ class ActivityProtocol(QObject):
 
     def readRequestFinished(self, reply):
         # Get the HTTP status code from the reply
-        self.httpStatusCode = int(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute).toString())
+        self.httpStatusCode = int(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute))
 
         #data = str("a")
         data = reply.readAll()
@@ -177,7 +184,7 @@ class ActivityProtocol(QObject):
         # the host was not found, the authentication failed or a forbidden
         # action in case a style with the same name already exists. It's up to
         # the receiver to handle these status codes.
-        self.readSignal.emit(self.httpStatusCode in (200, 201), self.httpStatusCode, QString(data))
+        self.readSignal.emit(self.httpStatusCode in (200, 201), self.httpStatusCode, str(data))
 
     def readById(self, id):
         """
@@ -200,28 +207,28 @@ class ActivityProtocol(QObject):
     def readByIdRequestFinished(self, reply):
 
         # Get the HTTP status code from the reply
-        self.httpStatusCode = int(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute).toString())
+        self.httpStatusCode = int(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute))
 
         data = reply.readAll()
 
-        self.readSignal.emit(self.httpStatusCode in (200, 201), self.httpStatusCode, QString(data))
+        self.readSignal.emit(self.httpStatusCode in (200, 201), self.httpStatusCode, str(data))
 
 class StakeholderProtocol(QObject):
 
     # SIGNAL that is emitted after stakeholders have been read
-    readSignal = pyqtSignal(bool, int, QString)
+    readSignal = pyqtSignal(bool, int, str)
 
     # SIGNAL that is emitted after a new stakeholder has been added
-    created = pyqtSignal(bool, int, QString)
+    created = pyqtSignal(bool, int, str)
 
     # SIGNAL that is emitted after an existing activity has been updated
-    updated = pyqtSignal(bool, int, QString)
+    updated = pyqtSignal(bool, int, str)
 
     # SIGNAL that is emitted after an activity has been deleted
-    deleted = pyqtSignal(bool, int, QString)
+    deleted = pyqtSignal(bool, int, str)
 
     # SIGNAL that is emitted after activities have been counted
-    counted = pyqtSignal(bool, int, QString)
+    counted = pyqtSignal(bool, int, str)
 
     def __init__(self, host, user, password):
         QObject.__init__(self)
@@ -250,12 +257,12 @@ class StakeholderProtocol(QObject):
         try:
             queryable = kwargs['queryable']
             params.append({'queryable': queryable})
-            queryableList = QString(queryable).split(',')
+            queryableList = queryable.split(',')
         except KeyError:
             pass
 
         for key, value in kwargs.items():
-            if QString(key).split("__")[0] in queryableList:
+            if key.split("__")[0] in queryableList:
                 params.append({key: value})
 
         url = "%s/stakeholders?" % self.host
@@ -277,7 +284,7 @@ class StakeholderProtocol(QObject):
 
         self.disconnect(self.manager, SIGNAL("finished( QNetworkReply* )"), self.readRequestFinished)
 
-        httpStatusCode = int(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute).toString())
+        httpStatusCode = int(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute))
 
         # Check the status code see also http://en.wikipedia.org/wiki/HTTP_status_code
         # In case of a successful upload we get a 201 status code back and the
@@ -286,7 +293,7 @@ class StakeholderProtocol(QObject):
         # the host was not found, the authentication failed or a forbidden
         # action in case a style with the same name already exists. It's up to
         # the receiver to handle these status codes.
-        self.readSignal.emit(httpStatusCode in (200, 201), httpStatusCode, QString(reply.readAll()))
+        self.readSignal.emit(httpStatusCode in (200, 201), httpStatusCode, reply.readAll())
 
     def add(self, stakeholder):
 
@@ -316,6 +323,6 @@ class StakeholderProtocol(QObject):
 
         self.disconnect(self.manager, SIGNAL("finished( QNetworkReply* )"), self.readRequestFinished)
 
-        httpStatusCode = int(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute).toString())
+        httpStatusCode = int(reply.attribute(QNetworkRequest.HttpStatusCodeAttribute))
 
-        self.created.emit(httpStatusCode in (200, 201), httpStatusCode, QString(reply.readAll()))
+        self.created.emit(httpStatusCode in (200, 201), httpStatusCode, reply.readAll())

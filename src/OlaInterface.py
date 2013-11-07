@@ -24,13 +24,14 @@ from ActivityRequestManager import ActivityRequestManager
 from OlaInterfaceDialog import OlaInterfaceDialog
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4 import QtCore
 from StakeholderRequestManager import StakeholderRequestManager
 from qgis.core import *
 from qgis.gui import *
 import resources_rc
 
 try:
-    _fromUtf8 = QString.fromUtf8
+    _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
     _fromUtf8 = lambda s: s
 
@@ -52,7 +53,7 @@ class OlaInterface(QObject):
         # Create an action to start capturing polygons and add it to the digitize toolbar
         icon = QIcon()
         icon.addPixmap(QPixmap(_fromUtf8(":/plugins/olainterface/lo-logo.png")), QIcon.Normal, QIcon.Off)
-        self.openDialogAction = QAction(icon, QString("Land Observatory"), self.iface.mainWindow())
+        self.openDialogAction = QAction(icon, "Land Observatory", self.iface.mainWindow())
         self.iface.pluginToolBar().addAction(self.openDialogAction)
 
         # Connect to signals for button behaviour

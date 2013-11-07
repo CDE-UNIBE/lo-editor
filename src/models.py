@@ -39,7 +39,7 @@ class QPlainUuid(QUuid):
         """
         Return the uuid as String but without brackets
         """
-        return super(QPlainUuid, self).toString().replace('{','').replace('}','')
+        return super(QPlainUuid, self).toString().replace('{', '').replace('}', '')
 
 class Tag(QObject):
 
@@ -180,10 +180,11 @@ class Activity(QObject):
 
         # The Uuid as trimmed string
         id = self._id.toString()
-        feature.setAttributeMap({
-                                0: QVariant(id),
-                                1: QVariant(self._version)
-                                })
+        #feature.setAttributeMap({
+        #                        0: QVariant(id),
+        #                        1: QVariant(self._version)
+        #                        })
+        feature.setAttributes([(0, id), (1, self._version)])
         return feature
 
 
@@ -277,11 +278,11 @@ class Stakeholder(QObject):
             repr = "%s %s" % (repr, self.id.toString())
         except AttributeError:
             pass
-        repr = "%s\n"% repr
+        repr = "%s\n" % repr
 
         for tg in self.tagGroups:
-            repr = "%s%s" % (repr,tg)
+            repr = "%s%s" % (repr, tg)
 
-        repr = "%s\n>"% repr
+        repr = "%s\n>" % repr
 
         return repr

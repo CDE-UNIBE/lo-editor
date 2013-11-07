@@ -33,6 +33,8 @@ import simplejson as json
 
 class OlaInterfaceDialog(QDialog):
 
+    readSettingsFinishedSignal = pyqtSignal( bool, int, str )
+
     def __init__(self, iface, ** kwargs):
         QDialog.__init__(self)
 
@@ -57,10 +59,10 @@ class OlaInterfaceDialog(QDialog):
     def getActivityByIdFinished(self, success, statusCode, response):
 
         # Disconnect events
-        self.activityRequestManager.disconnect(self.activityRequestManager.activityProtocol, SIGNAL("readSignal( bool, int, QString )"), self.getActivityByIdFinished)
+        self.activityRequestManager.disconnect(self.activityRequestManager.activityProtocol, SIGNAL("readSignal( bool, int, str )"), self.getActivityByIdFinished)
 
         keys = []
-        for i in self.settings.value("mainkeys").toStringList():
+        for i in self.settings.value("mainkeys"):
             keys.append(str(i))
 
         try:
@@ -123,7 +125,7 @@ class OlaInterfaceDialog(QDialog):
                                 multiPolygon = QgsGeometry.fromMultiPolygon(polygon_list)
                                 feature = QgsFeature()
                                 feature.setGeometry(multiPolygon)
-                                feature.setAttributeMap({})
+                                feature.setAttributes({})
                                 provider.addFeatures([feature])
 
                         # Set custom property to this layer
@@ -138,6 +140,7 @@ class OlaInterfaceDialog(QDialog):
         except:
             pass
 
+    @pyqtSlot()
     def getActivitiesFinished(self, success, statusCode, response):
 
         self.activityRequestManager.disconnect(self.activityRequestManager.activityProtocol, SIGNAL("readSignal( bool, int, QString )"), self.getActivitiesFinished)
@@ -207,8 +210,8 @@ class OlaInterfaceDialog(QDialog):
             return
 
         feature = selectedFeatures[0]
-        attributeMap = feature.attributeMap()
-        uuid = attributeMap[0].toString()
+        attributes = feature.attributes()
+        uuid = attributes[0][1]
 
         self.activityRequestManager.getActivityById(uuid, self)
 
@@ -222,7 +225,7 @@ class OlaInterfaceDialog(QDialog):
         diffObject['activities'] = []
         activity = {"id": str(self.currentActivity.id().toString()), "version": self.currentActivity.version()}
 
-        if self.activityLayer.customProperty('edited', False).toBool():
+        if self.activityLayer.customProperty('edited', False):
 
             provider = self.activityLayer.dataProvider()
 
@@ -234,7 +237,7 @@ class OlaInterfaceDialog(QDialog):
             # retreive every feature with its geometry and attributes
             while provider.nextFeature(feature):
 
-                if feature.attributeMap()[0].toString() == self.currentActivity.id().toString():
+                if feature.attributes()[0].toString() == self.currentActivity.id().toString():
 
                     p = feature.geometry().asPoint()
 
@@ -249,24 +252,26 @@ class OlaInterfaceDialog(QDialog):
 
         for id in QgsMapLayerRegistry.instance().mapLayers():
             qgsLayer = QgsMapLayerRegistry.instance().mapLayer(id)
-            if qgsLayer.customProperty("lo", False).toBool():
-                id = qgsLayer.customProperty("id").toInt()[0]
+            if qgsLayer.customProperty("lo", False):
+                print qgsLayer.customProperty("id")
+                id = qgsLayer.customProperty("id")
 
                 # Add also key tags to satisfy the protocol
                 taggroup = {"tg_id": id, "op": "add", "tags": []}
 
-                provider = qgsLayer.dataProvider()
+                #provider = qgsLayer.dataProvider()
 
-                feature = QgsFeature()
-                allAttrs = provider.attributeIndexes()
+                #feature = QgsFeature()
+                #allAttrs = provider.attributeIndexes()
 
                 # start data retreival: fetch geometry and all attributes for each feature
-                provider.select(allAttrs)
+                #provider.select(allAttrs)
 
                 polygon_list = []
 
                 # retreive every feature with its geometry and attributes
-                while provider.nextFeature(feature):
+                #while provider.nextFeature(feature):
+                for feature in qgsLayer.getFeatures():
 
                     # fetch geometry
                     geometry = feature.geometry()
@@ -346,7 +351,8 @@ class OlaInterfaceDialog(QDialog):
 
         # Read the settings from the server
         self.settingsProtocol = SettingsProtocol(host, user, password)
-        self.connect(self.settingsProtocol, SIGNAL("readSignal( bool, int, QString )"), self._read_settings_finished)
+        #self.connect(self.settingsProtocol, SIGNAL("readSignal( bool, int, str )"), self._read_settings_finished)
+        self.readSettingsFinishedSignal.connect(self._read_settings_finished)
         url = self.settingsProtocol.read()
         self.logger.log(url)
 
@@ -391,7 +397,7 @@ class OlaInterfaceDialog(QDialog):
         layers = []
         for id in QgsMapLayerRegistry.instance().mapLayers():
             qgsLayer = QgsMapLayerRegistry.instance().mapLayer(id)
-            if qgsLayer.customProperty("lo", False).toBool():
+            if qgsLayer.customProperty("lo", False):
                 layers.append(id)
 
         return layers

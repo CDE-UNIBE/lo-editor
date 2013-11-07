@@ -19,12 +19,14 @@ email                : adrian.weber@cde.unibe.ch
  ***************************************************************************/
 """
 
+import os
+
 from PyQt4.QtCore import QObject
 from PyQt4.QtCore import QRegExp
 from PyQt4.QtCore import QSettings
-from PyQt4.QtCore import QString
 from PyQt4.QtCore import QUuid
 from PyQt4.QtCore import SIGNAL
+from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QMessageBox
 from RequestManager import RequestManager
 from models import Activity
@@ -32,7 +34,6 @@ from models import QPlainUuid
 from models import Stakeholder
 from models import Tag
 from models import TagGroup
-import os
 from protocols import ActivityProtocol
 from protocols import StakeholderProtocol
 from qgis.core import QGis
@@ -50,6 +51,8 @@ class ActivityRequestManager(RequestManager):
 
     configFile = "landmatrix.activity.ini"
 
+    created = pyqtSignal( bool, int, str )
+
     def __init__(self, host, user, pw):
         RequestManager.__init__(self, host, user, pw)
 
@@ -60,6 +63,7 @@ class ActivityRequestManager(RequestManager):
 
         # Connect to the stylePosted signal emitted by the GeoServer object
         self.connect(self.activityProtocol, SIGNAL("readSignal( bool, int, QString )"), dialog.getActivitiesFinished)
+        #self.readSignal.connect(dialog.getActivitiesFinished)
 
         url = self.activityProtocol.read(extent)
         self.log(url)
@@ -151,7 +155,7 @@ class ActivityRequestManager(RequestManager):
 
             self.disconnect(self.activityProtocol, SIGNAL("readSignal( bool, int, QString )"), _checkActivityExistsFinished)
 
-            self.log("Server returned status code %i and response:\n%s" % (statusCode,response))
+            self.log("Server returned status code %i and response:\n%s" % (statusCode, response))
 
             activities = self.parseActivitiesResponse(response)
             if len(activities) == 0:
@@ -159,7 +163,7 @@ class ActivityRequestManager(RequestManager):
                 _createNewActivity(uid)
 
             #else:
-             #   _createNewActivity(uid, activities[0])
+                #   _createNewActivity(uid, activities[0])
 
 
         # Get the dict that maps the attribute names from the landmatrix input Shapefile to the
@@ -185,7 +189,7 @@ class ActivityRequestManager(RequestManager):
             if str(field.name()) in transformMap:
                 attributeIndexes.append(i)
                 fieldIndexMap[i] = transformMap[str(field.name())]
-            elif field.name() == QString(identifierColumn):
+            elif field.name() == str(identifierColumn):
                 identifierColumnIndex = i
 
 
@@ -204,17 +208,13 @@ class ActivityRequestManager(RequestManager):
 
             # If the identifier is empty or None, create a new activity.
             # This should only be necessary at the initial imports
-            if identifierValue is None or QString(identifierValue) == QString(''):
+            if identifierValue is None or str(identifierValue) == str(''):
                 _createNewActivity()
 
-            #if QString(idenitfierValue).contains(QRegExp('a0c78834-fd98-4d4d-b8b5-0754b50f2510'))
+            #if str(idenitfierValue).contains(QRegExp('a0c78834-fd98-4d4d-b8b5-0754b50f2510'))
             else:
                 uid = QPlainUuid(identifierValue)
                 _checkActivityExists(uid)
-
-
-
-
 
     def addActivitiesFromLayerFinished(self, success, statusCode, reason):
         QMessageBox.warning(self.iface.mainWindow(), reason, "Server returned %i." % statusCode)

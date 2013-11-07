@@ -22,7 +22,6 @@ email                : adrian.weber@cde.unibe.ch
 from PyQt4.QtCore import QObject
 from PyQt4.QtCore import QRegExp
 from PyQt4.QtCore import QSettings
-from PyQt4.QtCore import QString
 from PyQt4.QtCore import SIGNAL
 from PyQt4.QtGui import QMessageBox
 from Logger import Logger
@@ -98,14 +97,14 @@ class RequestManager(QObject):
             settings.beginGroup(i)
             keys = []
             # Check if the current group defines a taggroup
-            if QString(i).contains(QRegExp('taggroup[0-9+]')):
+            if i.contains(QRegExp('taggroup[0-9+]')):
                 for j in settings.allKeys():
                     keys.append(str(j))
                     transformMap[str(j)] = str(settings.value(j).toString())
             # Check if the current group defines general settings
-            elif QString(i).contains(QRegExp('settings')):
+            elif i.contains(QRegExp('settings')):
                 for j in settings.allKeys():
-                    if settings.value(j) == QString('activity_identifier'):
+                    if settings.value(j) == 'activity_identifier':
                         identifierColumn = str(j)
 
             # End this group

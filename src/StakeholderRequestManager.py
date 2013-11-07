@@ -22,7 +22,6 @@ email                : adrian.weber@cde.unibe.ch
 from PyQt4.QtCore import QObject
 from PyQt4.QtCore import QRegExp
 from PyQt4.QtCore import QSettings
-from PyQt4.QtCore import QString
 from PyQt4.QtCore import SIGNAL
 from PyQt4.QtGui import QMessageBox
 from RequestManager import RequestManager
@@ -55,7 +54,7 @@ class StakeholderRequestManager(RequestManager):
 
     def getStakeholders(self):
         # Connect to the stylePosted signal emitted by the GeoServer object
-        self.connect(self.stakeholderProtocol, SIGNAL("readSignal( bool, int, QString )"), self.getStakeholdersFinished)
+        self.connect(self.stakeholderProtocol, SIGNAL("readSignal( bool, int, str )"), self.getStakeholdersFinished)
 
         url = self.stakeholderProtocol.read(queryable="Name,Country", Name__ilike='Heng', Country__ilike='cambodia')
         self.log(url)
@@ -63,7 +62,7 @@ class StakeholderRequestManager(RequestManager):
     def getStakeholdersFinished(self, success, statusCode, response):
 
         # It's necessary to disconnect this signal again
-        self.disconnect(self.stakeholderProtocol, SIGNAL("readSignal( bool, int, QString )"), self.getStakeholdersFinished)
+        self.disconnect(self.stakeholderProtocol, SIGNAL("readSignal( bool, int, str )"), self.getStakeholdersFinished)
 
         if success:
             # Parse the result
@@ -98,7 +97,7 @@ class StakeholderRequestManager(RequestManager):
         return stakeholders
 
     def addStakeholders(self):
-        self.connect(self.stakeholderProtocol, SIGNAL("created( bool, int, QString"), self.addStakeholdersFinished)
+        self.connect(self.stakeholderProtocol, SIGNAL("created( bool, int, str"), self.addStakeholdersFinished)
 
         # Dummy stakeholder
         s = Stakeholder()
@@ -116,7 +115,7 @@ class StakeholderRequestManager(RequestManager):
     def addStakeholdersFinished(self, success, statusCode, response):
 
         # Disconnect this signal
-        self.disconnect(self.stakeholderProtocol, SIGNAL("created( bool, int, QString"), self.addStakeholdersFinished)
+        self.disconnect(self.stakeholderProtocol, SIGNAL("created( bool, int, str"), self.addStakeholdersFinished)
 
         self.log(statusCode)
 
@@ -129,7 +128,7 @@ class StakeholderRequestManager(RequestManager):
 
         # Connect to the protocol to get noticed as soon as the stakeholder has
         # been created
-        self.connect(self.stakeholderProtocol, SIGNAL("created( bool, int, QString"), self.addStakeholdersFinished)
+        self.connect(self.stakeholderProtocol, SIGNAL("created( bool, int, str"), self.addStakeholdersFinished)
 
         # Get the dict maps the attribute names from the landmatrix input Shapefile to the
         # fields defined in the global definition yaml
@@ -196,7 +195,7 @@ class StakeholderRequestManager(RequestManager):
         self.log(rawBody)
 
         # Disconnect the signal
-        self.disconnect(self.stakeholderProtocol, SIGNAL("created( bool, int, QString"), self.addStakeholdersFinished)
+        self.disconnect(self.stakeholderProtocol, SIGNAL("created( bool, int, str"), self.addStakeholdersFinished)
 
     def addStakeholdersFromLayerFinished(self, success, statusCode, response):
 
