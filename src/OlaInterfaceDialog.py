@@ -61,7 +61,7 @@ class OlaInterfaceDialog(QDialog):
 
         keys = []
         for i in self.settings.value("mainkeys").toStringList():
-            keys.append(str(i))
+            keys.append(i)
 
         try:
             data = json.loads(str(response))
@@ -180,7 +180,7 @@ class OlaInterfaceDialog(QDialog):
 
             s = json.loads(str(data))
 
-            self.settings.setValue("mainkeys", s['mainkeys'])
+            self.settings.setValue("mainkeys", [i[0] for i in s['mainkeys']])
 
     # See http://pyqt.sourceforge.net/Docs/PyQt4/new_style_signals_slots.html
     # for this style of connecting to signals
